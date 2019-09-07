@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package cmd
 
 import (
@@ -22,13 +23,15 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/masudur-rahman/list/cmd/options"
 	"github.com/masudur-rahman/list/lib"
 	"github.com/masudur-rahman/list/types"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	showFile, showFolder, showHidden, showAll bool
+	showFile, showFolder, showHidden, showAll, showVersion bool
 )
 
 func isHidden(filename string) bool {
@@ -39,11 +42,24 @@ var rootCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the files and directories under current directory",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cwd, err := os.Getwd()
+		if showVersion {
+			if len(args) > 0 {
+				return fmt.Errorf("arguments not expected")
+			}
+			fmt.Println(types.Version)
+			return nil
+		}
+
+		dir, err := options.GetDir(args)
 		if err != nil {
 			return err
 		}
-		fi, err := ioutil.ReadDir(cwd)
+
+		if _, err := os.Stat(dir); err != nil {
+			return os.ErrNotExist
+		}
+
+		fi, err := ioutil.ReadDir(dir)
 		if err != nil {
 			return err
 		}
@@ -63,6 +79,7 @@ var rootCmd = &cobra.Command{
 			if showAll {
 				items = append(items, types.File{Name: f.Name(), IsDir: f.IsDir()})
 			}
+
 		}
 
 		sort.SliceStable(items, func(i, j int) bool {
@@ -78,8 +95,10 @@ func init() {
 	rootCmd.Flags().BoolVarP(&showFile, "file", "f", false, "If file flag is set only files are shown")
 	rootCmd.Flags().BoolVarP(&showFolder, "dir", "d", false, "If dir flag is set only directories are shown")
 	rootCmd.Flags().BoolVar(&showHidden, "show-hidden", false, "If show-hidden flag is set hidden files or folders are shown")
+	rootCmd.Flags().BoolVarP(&showVersion, "version", "v", false, "Shows the version of list")
 }
 
+//Execute executes the root command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

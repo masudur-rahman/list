@@ -14,19 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package lib
+package options
 
 import (
 	"fmt"
-
-	"github.com/masudur-rahman/list/types"
+	"os"
 )
 
-// Println takes a slice of types.File
-// prints them on standard output
-func Println(a []types.File) {
-	for _, b := range a {
-		fmt.Print(b)
+// GetDir returns the provided directory
+// otherwise returns current directory
+func GetDir(args []string) (string, error) {
+	if len(args) == 1 {
+		return args[0], nil
 	}
-	println("")
+	if len(args) > 1 {
+		return "", fmt.Errorf("multiple directory provided")
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return cwd, nil
 }
