@@ -15,7 +15,7 @@
 - `list --help`
 - `list [flags]`
     - Available flags : `file`, `dir`, `show-hidden` & `version`
-    
+
 - a dir argument can be provided with `list` command
 - By default `list` shows all the visible files and directories
 - If you provide `show-hidden` flag, hidden files and directories will also be shown
