@@ -12,10 +12,6 @@ cache:
     - $HOME/.cache/go-build
     - $GOPATH/pkg/mod
 
-# Only clone the most recent commit.
-git:
-  depth: 1
-
 install: true
 
 notifications:
