@@ -1,0 +1,25 @@
+language: go
+
+env:
+  - GO111MODULE=on
+  - GOFLAGS='-mod vendor'
+
+go:
+  - 1.12.x
+
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $GOPATH/pkg/mod
+
+# Only clone the most recent commit.
+git:
+  depth: 1
+
+install: true
+
+notifications:
+  email: false
+
+script:
+  - go build .
